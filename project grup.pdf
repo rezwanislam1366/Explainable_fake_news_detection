@@ -1,0 +1,198 @@
+
+1
+
+Automatic Zoom
+Explainable Fake News Detection Using Traditional NLP: A 
+Comparative Analysis of BoW, TF-IDF, and Machine Learning 
+Classifiers 
+MD Mehedul Islam, MD Fardin Rahman Mridul, Nazmul Hossain Khan, MD Rezwan Islam Shuvo and Supta 
+Richard Philip 
+Department of Computer Science, Faculty of Science and Technology 
+American International University-Bangladesh 
+Dhaka, Bangladesh 
+mehedulislam7356@gmail.com, f.mridul10@gmail.com, nazkhantwo@gmail.com, rezwanislam1366@gmail.com, 
+richard@aiub.edu 
+Abstract—The proliferation of digital misinformation 
+across online news networks poses severe challenges to 
+public discourse and institutional trust. While modern deep 
+neural  networks  achieve  high  classification  accuracy,  their 
+opaque  internal  representations  limit  their  practical  utility 
+in editorial, regulatory, and decision-support scenarios 
+where  model  interpretability  is  essential.  In  this  work,  we 
+present an empirical investigation into traditional, 
+interpretable  machine  learning  paradigms  for  automated 
+fake news detection. Using a balanced experimental corpus 
+of  3,000  political  news  articles  (1,500  real  and  1,500  fake) 
+sampled  from  the  Clément  Bisaillon  Kaggle  dataset,  we 
+evaluate  the  comparative  impact  of  Bag-of-Words  (BoW) 
+and  Term  Frequency-Inverse  Document  Frequency  (TF-
+IDF) representations. We benchmark three canonical 
+classifiers:  Bernoulli  Naive  Bayes,  L1-regularized  Logistic 
+Regression  (Lasso),  and  linear  Support  Vector  Machines 
+(SVM). Experimental evaluation on a held-out test set 
+demonstrates  that  Logistic  Regression  paired  with  TF-IDF 
+yields the highest predictive performance, achieving an 
+accuracy of 0.9933, precision of 0.9966, recall of 0.9900, and 
+an F1-score of 0.9933. Furthermore, we conduct an 
+explainability  analysis  leveraging  sparse  Lasso  coefficient 
+shrinkage to identify salient lexical indicators. The 
+interpretability analysis reveals notable structural and 
+stylistic  patterns:  authentic  articles  correlate  strongly  with 
+formal journalistic attribution (e.g., 'said') and wire agency 
+datelines ('reuters'), whereas fake articles frequently 
+exhibit metadata tags (e.g., 'via', 'featured') and speculative 
+phrasing. We discuss these findings in the context of dataset 
+artifacts  and  outline  methodological  recommendations  for 
+robust text classification systems. 
+Index Terms—Fake news detection, Natural Language 
+Processing, Bag-of-Words, TF-IDF, Logistic Regression, 
+Support Vector Machines, Naive Bayes, Model 
+Interpretability. 
+I. INTRODUCTION 
+The expansion of digital communication channels and social 
+media ecosystems has accelerated information sharing while 
+concurrently facilitating the dissemination of unverified and 
+misleading  textual  content  [1].  Misinformation  campaigns 
+and deceptive narratives can influence public opinion, 
+electoral discourse, and societal trust. Developing 
+automated  natural  language  processing  (NLP)  systems  that 
+assist  in  distinguishing  authentic  reporting  from  fabricated 
+content represents an active and practically important 
+research direction [2]. 
+While deep learning architectures and large language 
+models (LLMs) currently establish competitive 
+classification  benchmarks  in  NLP  tasks  [3],  their  complex, 
+high-dimensional parameter spaces often obscure the 
+specific evidence driving individual predictions [4]. In 
+domains such as journalism assistance and content 
+moderation, human reviewers require transparent 
+justifications  for  automated  decisions.  Traditional  machine 
+learning models—particularly generalized linear models and 
+linear margin classifiers—provide clear mathematical 
+formulations where individual feature weights directly 
+reflect relative feature contributions [5]. 
+In this study, we implement an explainable fake news 
+classification  pipeline  using  traditional  NLP  techniques  in 
+R. We analyze three central research questions: 
+RQ1: How do count-based Bag-of-Words and inverse-
+document-frequency-weighted TF-IDF representations 
+influence the empirical performance of traditional classifiers 
+on a balanced sampled news corpus? 
+RQ2: Which canonical supervised classifier—among 
+Bernoulli Naive Bayes, L1-regularized Logistic Regression, 
+and linear Support Vector Machines—demonstrates the 
+highest  predictive  consistency  across  standard  evaluation 
+metrics? 
+RQ3:  What  lexical  features  most  strongly  influence  the 
+decision boundary of the regularized linear model, and what 
+do  these  weights  reveal  regarding  linguistic  styling  and 
+dataset-specific characteristics? 
+The remainder of this paper is structured as follows: Section 
+II reviews related literature in text classification and 
+interpretability. Section III  describes the dataset, textual 
+preprocessing, mathematical formulations, and experimental 
+procedure.  Section  IV  presents  the  quantitative  results  and 
+confusion  matrices.  Section  V  provides  the  explainability 
+analysis  based  on  model  coefficients.  Section  VI  addresses 
+methodological  considerations  and  limitations,  and  Section 
+VII concludes the paper. 
+II. RELATED WORK 
+A. Text Classification for Misinformation Detection 
+Computational  detection  of  deceptive  text  has  historically 
+relied on linguistic and stylistic feature analysis [6]. 
+Linguistic  Inquiry  and  Word  Count  (LIWC)  frameworks 
+have  documented  that  deceptive  or  sensationalized  writings 
+often exhibit differences in lexical complexity, pronoun 
+distribution,  and  emotional  intensity  compared  to  standard 
+journalistic  reporting  [6],  [7].  In  applied  machine  learning, 
+early  benchmark  evaluations  demonstrated  that  supervised 
+classifiers  trained  on  lexical  n-grams  and  syntactic  patterns 
+provide  effective  baselines  for  identifying  misinformation 
+[8], [9]. 
+B. Text Representations: Bag-of-Words versus TF-IDF 
+Transforming unstructured text into numerical vector spaces 
+is a core prerequisite in traditional text processing pipelines 
+[10]. The Bag-of-Words (BoW) model represents each 
+document  through  term  occurrence  frequencies  or  binary 
+presence indicators, abstracting away syntactic ordering 
+while capturing lexical composition [11]. While 
+computationally  straightforward,  raw  frequency  counts  can 
+overemphasize ubiquitous terms [12]. 
+To account for term specificity across a document 
+collection,  Salton  and  Buckley  [13]  formalized  the  Term 
+Frequency-Inverse Document Frequency (TF-IDF) 
+weighting  approach.  In  document  classification  tasks,  TF-
+IDF reduces the influence of common terms and emphasizes 
+vocabulary  elements  with  higher  discriminative  specificity. 
+The relative utility of BoW versus TF-IDF varies depending 
+on  the  classification  architecture  and  whether  classification 
+signals  are  driven  by  term  occurrence  or  term  distribution 
+[14]. 
+C. Linear Model Interpretability 
+Interpretability  in  machine  learning  has  received  increased 
+attention as automated systems are applied in societal 
+contexts [15]. While post-hoc surrogate methods like LIME 
+[16]  estimate  local  decision  surfaces  of  black-box  models, 
+linear  models  provide  intrinsic  explainability.  In  particular, 
+L1  regularization  (Lasso),  introduced  by  Tibshirani  [17], 
+drives  uninformative  coefficients  to  zero,  isolating  a  sparse 
+set  of  active  predictors  whose  sign  and  magnitude  directly 
+indicate their contribution to class log-odds [18]. 
+III. DATASET AND METHODOLOGY 
+A. Dataset Description and Sampling Protocol 
+The  experimental  evaluation  utilizes  data  drawn  from  the 
+Fake and Real News Dataset published by Clément 
+Bisaillon  on  Kaggle  [19]  (derived  from  the  University  of 
+Victoria  ISOT  Research  Lab  collection  [20]).  The  source 
+repository provides separate archives: authentic articles 
+collected from Reuters wire services (True.csv) and 
+unverified or fabricated articles sourced from flagged 
+political websites and blogs (Fake.csv). 
+To establish a controlled and balanced benchmark, a sample 
+of  3,000  articles  was  constructed  programmatically  under  a 
+fixed  random  seed  (seed  =  42).  Exactly  1,500  real  articles 
+and  1,500  fake  articles  were  randomly  drawn  from  their 
+respective files. The headline ('title') and article body ('text') 
+were  concatenated  into  a  unified  text  attribute  ('content')  to 
+provide  comprehensive  lexical  context  for  each  document. 
+The combined sample was shuffled and saved. 
+B. Text Preprocessing Pipeline 
+The concatenated text content was processed using a 
+standardized sequence of text-cleaning operations 
+implemented via the R tm (Text Mining) package [21]: 
+1)  URL  Removal:  Regular  expressions  (http\S+|www\S+) 
+were applied to remove web addresses and hyperlinks. 
+2) Alphabetic Filtering: Non-alphabetic characters and 
+special  symbols  were  converted  to  whitespace  using  [^A-
+Za-z ]. 
+3)  Case Normalization: All text tokens were transformed to 
+lowercase. 
+4)  Punctuation  and  Number  Removal:  Punctuation  marks 
+and numerical digits were removed using 
+removePunctuation and removeNumbers. 
+5)  Stopword  Filtering:  Common  English  stopwords  were 
+removed using the standard stopword lexicon in tm. 
+6)  Whitespace  Consolidation and Sparsity Trimming: Extra 
+whitespace was stripped. A Document-Term Matrix (DTM) 
+was generated across the 3,000 documents. To remove 
+extremely  rare  terms  and  constrain  dimensionality,  terms 
+with sparsity greater than 98% were pruned using 
+removeSparseTerms(dtm, 0.98), reducing the raw 
+vocabulary of 34,669 terms to 1,668 terms. 
+TABLE I 
+DATASET CORPUS AND EXPERIMENTAL 
+SPECIFICATIONS 
+Parameter / Attribute Experimental Specification 
+Total Sampled Articles 3,000  documents  (Balanced:  1,500 
+Real / 1,500 Fake) 
+Training Partition (80%) 2,400 documents (1,200 Real / 
+1,200 Fake) 
+Testing Partition (20%) 600 documents (300 Real / 300 
+Fake) 
+Raw Vocabulary Size 34,669 unique terms 
+Trimmed Vocabulary 
+(Sparsity <= 0.98) 
+1,668 features 
+C. Feature Representation Formulations 
+Two text representation schemes were constructed from the 
+corpus: 
